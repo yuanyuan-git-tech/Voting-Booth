@@ -1,0 +1,40 @@
+version: '3'
+services:
+  apache:
+    build:
+      context: ./httpd
+    ports:
+      - "80:80"
+    depends_on:
+      - candidates_node
+      - voters_node
+
+  candidates_node:
+    build:
+      context: ./node
+      dockerfile: CandidatesDockerfile
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./node:/app
+    depends_on:
+      - mongodb
+
+  voters_node:
+    build:
+      context: ./node
+      dockerfile: VotersDockerfile
+    ports:
+      - "3002:3002"
+    volumes:
+      - ./node:/app
+    depends_on:
+      - mongodb
+
+
+  mongodb:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - /opt/homebrew/var/mongodb:/data/db
